@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بسبوستي | حلا يستاهل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyD2rFrlMmfUI3I1o0VfemwuPdoY8AOgTTY",
+    authDomain: "biss-8d3f0.firebaseapp.com",
+    projectId: "biss-8d3f0",
+    storageBucket: "biss-8d3f0.firebasestorage.app",
+    messagingSenderId: "312743000953",
+    appId: "1:312743000953:web:a2ed4e1e54ae717e6d4da8"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const auth = firebase.auth();
+</script>
+<style>
+  :root{
+    --cream:#FBF3E7;
+    --cream-dark:#F1E2C8;
+    --maroon:#7A2E2E;
+    --maroon-dark:#5E2020;
+    --gold:#C08A2E;
+    --coffee:#2B1B14;
+    --rose:#E8B4B8;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--cream);
+    color:var(--coffee);
+    font-family:'Tajawal', sans-serif;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  h1,h2,.logo{font-family:'Lalezar', sans-serif; font-weight:400;}
+
+  /* Header */
+  .site-header{
+    display:flex; flex-direction:column; align-items:center;
+    padding:28px 20px 18px;
+    text-align:center;
+  }
+  .logo{
+    font-size:clamp(32px,6vw,44px);
+    color:var(--maroon);
+    letter-spacing:1px;
+  }
+  .tagline{
+    color:var(--gold);
+    font-size:14px;
+    margin-top:4px;
+    letter-spacing:.5px;
+  }
+  .site-nav{ display:none; }
+
+  /* Hamburger menu */
+  .hamburger{
+    position:fixed; top:16px; right:16px; z-index:60;
+    width:42px; height:42px; border-radius:50%;
+    background:var(--cream-dark); border:1px solid #e3d3b8;
+    color:var(--maroon); font-size:18px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 12px rgba(43,27,20,.1);
+  }
+  .menu-overlay{
+    position:fixed; inset:0; background:rgba(43,27,20,.45);
+    z-index:65; opacity:0; pointer-events:none; transition:opacity .25s ease;
+  }
+  .menu-overlay.open{ opacity:1; pointer-events:auto; }
+  .side-menu{
+    position:fixed; top:0; right:0; height:100vh; width:min(280px,80vw);
+    background:var(--cream); z-index:70; padding:24px 20px;
+    box-shadow:-8px 0 24px rgba(43,27,20,.15);
+    transform:translateX(100%); transition:transform .3s ease;
+    overflow-y:auto;
+  }
+  .side-menu.open{ transform:translateX(0); }
+  .side-menu h3{ font-family:'Lalezar',sans-serif; color:var(--maroon); font-size:22px; margin-bottom:6px; }
+  .side-menu-close{
+    position:absolute; top:18px; left:18px; background:none; border:none;
+    font-size:18px; color:#8a7468; cursor:pointer;
+  }
+  .side-menu-list{ list-style:none; margin-top:18px; display:flex; flex-direction:column; gap:4px; }
+  .side-menu-list button{
+    width:100%; text-align:right; background:none; border:none;
+    padding:12px 10px; border-radius:10px; font-family:'Tajawal',sans-serif;
+    font-size:15px; color:var(--coffee); cursor:pointer;
+    display:flex; justify-content:space-between; align-items:center;
+    transition:background .2s ease;
+  }
+  .side-menu-list button:hover{ background:var(--cream-dark); }
+  .side-menu-list .offer-tag{ color:var(--gold); font-size:12px; font-weight:700; }
+  .side-menu-empty{ color:#8a7468; font-size:13.5px; margin-top:14px; }
+  .side-menu-divider{ border-top:1px solid #e3d3b8; margin:14px 0; }
+
+  @keyframes cardPulse{
+    0%{ box-shadow:0 0 0 0 rgba(192,138,46,.55); }
+    100%{ box-shadow:0 0 0 14px rgba(192,138,46,0); }
+  }
+  .card.highlight{ animation:cardPulse 1s ease-out 2; }
+
+  /* Hero */
+  .hero{
+    text-align:center;
+    padding:40px 20px 60px;
+    position:relative;
+  }
+  .hero h1{
+    font-size:clamp(30px,7vw,58px);
+    color:var(--coffee);
+    line-height:1.3;
+    max-width:720px;
+    margin:0 auto;
+  }
+  .drizzle{
+    display:block;
+    margin:14px auto 0;
+    width:min(320px,70vw);
+  }
+  .drizzle path{
+    stroke-dasharray:600;
+    stroke-dashoffset:600;
+    animation:draw 1.6s ease forwards .3s;
+  }
+  @keyframes draw{ to{stroke-dashoffset:0;} }
+  .hero p{
+    max-width:520px;
+    margin:22px auto 0;
+    color:#5c443a;
+    font-size:16px;
+  }
+  .cta{
+    display:inline-block;
+    margin-top:30px;
+    background:var(--maroon);
+    color:var(--cream);
+    text-decoration:none;
+    padding:14px 38px;
+    border-radius:999px;
+    font-weight:700;
+    font-size:15px;
+    transition:transform .2s ease, background .2s ease;
+    box-shadow:0 6px 18px rgba(122,46,46,.25);
+  }
+  .cta:hover{ background:var(--maroon-dark); transform:translateY(-2px); }
+  .cta:focus-visible{ outline:3px solid var(--gold); outline-offset:3px; }
+
+  /* Scallop divider */
+  .scallop{
+    height:26px;
+    background-image:radial-gradient(circle at 10px -2px, transparent 12px, var(--cream-dark) 13px);
+    background-size:24px 24px;
+    background-position:top;
+  }
+  .scallop.flip{ transform:scaleY(-1); }
+
+  /* Products */
+  .products-section{
+    background:var(--cream-dark);
+    padding:50px 20px 70px;
+  }
+  .products-section h2{
+    text-align:center;
+    color:var(--maroon);
+    font-size:clamp(26px,5vw,36px);
+    margin-bottom:36px;
+  }
+  .product-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+    gap:24px;
+    max-width:1080px;
+    margin:0 auto;
+  }
+  .card{
+    background:var(--cream);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 8px 20px rgba(43,27,20,.08);
+    display:flex; flex-direction:column;
+    transition:transform .2s ease;
+  }
+  .card:hover{ transform:translateY(-4px); }
+  .card .thumb{
+    width:100%; height:170px;
+    object-fit:cover;
+    background:linear-gradient(135deg,var(--rose),var(--gold));
+  }
+  .card .thumb.placeholder{
+    display:flex; align-items:center; justify-content:center;
+    font-size:40px; color:var(--cream);
+  }
+  .card-body{ padding:16px 18px 20px; display:flex; flex-direction:column; gap:8px; flex:1; }
+  .card-body h3{ font-size:18px; color:var(--coffee); }
+  .card-body p{ font-size:13.5px; color:#6b5750; flex:1; }
+  .price-row{ display:flex; justify-content:space-between; align-items:center; margin-top:4px; }
+  .price{ font-weight:700; color:var(--maroon); font-size:16px; }
+  .order-btn{
+    background:#25D366; color:#fff; border:none;
+    padding:10px 16px; border-radius:999px;
+    font-family:'Tajawal',sans-serif; font-weight:700; font-size:13.5px;
+    cursor:pointer; display:flex; align-items:center; gap:6px;
+  }
+  .order-btn:hover{ filter:brightness(.95); }
+
+  .empty-state{
+    text-align:center;
+    color:#8a7468;
+    padding:30px 10px;
+    font-size:15px;
+  }
+
+  /* Offers */
+  .offers-section{
+    background:var(--cream);
+    padding:50px 20px 70px;
+  }
+  .offers-section h2{
+    text-align:center;
+    color:var(--gold);
+    font-size:clamp(26px,5vw,36px);
+    margin-bottom:36px;
+  }
+  .card.offer{ border:2px solid var(--gold); position:relative; }
+  .offer-badge{
+    position:absolute; top:10px; right:10px; z-index:2;
+    background:var(--gold); color:#fff; font-size:12px; font-weight:700;
+    padding:4px 12px; border-radius:999px;
+  }
+  .thumb-wrap{ position:relative; }
+  .old-price{ text-decoration:line-through; color:#a3907f; font-size:12.5px; margin-left:6px; }
+
+  /* Popular sweets modal list */
+  .popular-list{ list-style:none; margin-top:14px; display:flex; flex-direction:column; gap:10px; }
+  .popular-list li{
+    display:flex; justify-content:space-between; align-items:center;
+    background:var(--cream-dark); border-radius:12px; padding:10px 14px; font-size:14px;
+  }
+  .popular-list .pnum{ color:var(--gold); font-weight:700; margin-left:8px; }
+  .avail-badge{ font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px; white-space:nowrap; }
+  .avail-badge.yes{ background:#DCEEDC; color:#2f7a2f; }
+  .avail-badge.no{ background:#f0e5cf; color:#a3907f; }
+  .avail-badge.offer{ background:var(--gold); color:#fff; }
+
+  .modal-box select{
+    width:100%; padding:10px 12px; border-radius:10px;
+    border:1px solid #e3d3b8; background:#fff; font-family:'Tajawal',sans-serif; font-size:14px;
+  }
+  .checkbox-row{ display:flex; align-items:center; gap:8px; margin-top:14px; }
+  .checkbox-row input{ width:auto; }
+  .checkbox-row label{ margin:0; }
+
+  footer{
+    text-align:center;
+    padding:34px 20px 44px;
+    color:#8a7468;
+    font-size:13.5px;
+    position:relative;
+  }
+  footer a{ color:var(--maroon); text-decoration:none; font-weight:700; }
+  #adminGear{
+    position:fixed; left:16px; bottom:16px;
+    width:38px; height:38px; border-radius:50%;
+    background:var(--cream-dark); border:1px solid #e3d3b8;
+    color:#a3907f; font-size:16px; cursor:pointer;
+    opacity:.5; transition:opacity .2s ease;
+  }
+  #adminGear:hover{ opacity:1; }
+
+  /* Modal */
+  .modal{
+    position:fixed; inset:0; background:rgba(43,27,20,.55);
+    display:flex; align-items:center; justify-content:center;
+    padding:20px; z-index:50;
+  }
+  .modal.hidden{ display:none; }
+  .modal-box{
+    background:var(--cream); border-radius:18px;
+    padding:26px 24px; width:100%; max-width:420px;
+    max-height:85vh; overflow-y:auto;
+  }
+  .modal-box h3{ font-family:'Lalezar',sans-serif; color:var(--maroon); font-size:22px; margin-bottom:14px;}
+  .modal-box label{ display:block; font-size:13px; margin:12px 0 5px; color:#6b5750; }
+  .modal-box input[type=text], .modal-box input[type=number], .modal-box textarea, .modal-box input[type=password]{
+    width:100%; padding:10px 12px; border-radius:10px;
+    border:1px solid #e3d3b8; background:#fff; font-family:'Tajawal',sans-serif; font-size:14px;
+  }
+  .modal-box textarea{ resize:vertical; min-height:60px; }
+  .modal-actions{ display:flex; gap:10px; margin-top:18px; }
+  .btn{
+    flex:1; padding:11px; border:none; border-radius:10px;
+    font-family:'Tajawal',sans-serif; font-weight:700; font-size:14px; cursor:pointer;
+  }
+  .btn-primary{ background:var(--maroon); color:#fff; }
+  .btn-ghost{ background:#eee0c8; color:var(--coffee); }
+  .hidden{ display:none !important; }
+  .err{ color:#b13c3c; font-size:12.5px; margin-top:8px; min-height:16px; }
+
+  .existing-list{ margin-top:22px; border-top:1px solid #e3d3b8; padding-top:14px; }
+  .existing-item{
+    display:flex; align-items:center; gap:10px; padding:8px 0;
+    border-bottom:1px solid #f0e5cf;
+  }
+  .existing-item img{ width:42px; height:42px; border-radius:8px; object-fit:cover; background:var(--rose); }
+  .existing-item .name{ flex:1; font-size:13.5px; }
+  .existing-item button{
+    background:none; border:none; color:#b13c3c; font-size:12.5px; cursor:pointer;
+  }
+</style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="logo">بسبوستي</div>
+    <div class="tagline">حلا بيتي، يوصلك بلمسة واتساب</div>
+  </header>
+
+  <section class="hero">
+    <h1>حلا يستاهل الاحتفال</h1>
+    <svg class="drizzle" viewBox="0 0 300 24" fill="none">
+      <path d="M4 14 Q40 2 76 14 T148 14 T220 14 T292 14" stroke="#C08A2E" stroke-width="4" stroke-linecap="round"/>
+    </svg>
+    <p>تصفح أصناف الحلا، واختار اللي يعجبك، واطلبه على طول عن طريق واتساب.</p>
+    <a href="#products" class="cta">شوف الحلا</a>
+  </section>
+
+  <div class="scallop"></div>
+
+  <section id="products" class="products-section">
+    <h2>المنتجات</h2>
+    <div id="productGrid" class="product-grid"></div>
+    <div id="emptyState" class="empty-state hidden">لسا ما فيه حلا مضاف… ترقبوا قريبًا 🍯</div>
+  </section>
+
+  <div class="scallop flip"></div>
+
+  <section id="offers" class="offers-section">
+    <h2>العروض 🔥</h2>
+    <div id="offerGrid" class="product-grid"></div>
+    <div id="offerEmptyState" class="empty-state hidden">ما فيه عروض حالياً… ترقبوا قريبًا</div>
+  </section>
+
+  <div class="scallop"></div>
+
+  <footer>
+    <p>للطلب والاستفسار: <a href="https://wa.me/966533631172" target="_blank" rel="noopener">تواصل عبر واتساب</a></p>
+  </footer>
+
+  <button id="adminGear" title="لوحة التحكم">⚙</button>
+
+  <button id="hamburgerBtn" class="hamburger" title="القائمة">☰</button>
+  <div id="menuOverlay" class="menu-overlay"></div>
+  <div id="sideMenu" class="side-menu">
+    <button id="closeSideMenu" class="side-menu-close">✕</button>
+    <h3>الأقسام</h3>
+    <ul id="sideMenuList" class="side-menu-list"></ul>
+  </div>
+
+  <div id="adminModal" class="modal hidden">
+    <div class="modal-box">
+      <div id="pinStep">
+        <h3>تسجيل دخول الأدمن</h3>
+        <label>الإيميل</label>
+        <input type="text" id="loginEmail" placeholder="admin@example.com">
+        <label>كلمة المرور</label>
+        <input type="password" id="loginPassword" placeholder="••••••••">
+        <div class="err" id="pinErr"></div>
+        <div class="modal-actions">
+          <button class="btn btn-primary" id="pinSubmit">دخول</button>
+          <button class="btn btn-ghost" id="pinCancel">إلغاء</button>
+        </div>
+      </div>
+
+      <div id="panelStep" class="hidden">
+        <h3>إضافة صنف جديد</h3>
+        <label>اسم الصنف</label>
+        <select id="pNameSelect"></select>
+        <input type="text" id="pNameCustom" placeholder="اكتب اسم الصنف" class="hidden" style="margin-top:8px;">
+        <label>السعر (ريال)</label>
+        <input type="number" id="pPrice" placeholder="25">
+        <div class="checkbox-row">
+          <input type="checkbox" id="pIsOffer">
+          <label for="pIsOffer">عرض خاص؟</label>
+        </div>
+        <div id="offerPriceWrap" class="hidden">
+          <label>السعر قبل الخصم (ريال)</label>
+          <input type="number" id="pOriginalPrice" placeholder="35">
+        </div>
+        <label>الوصف</label>
+        <textarea id="pDesc" placeholder="وصف قصير عن الصنف"></textarea>
+        <label>صورة الصنف</label>
+        <input type="file" id="pImage" accept="image/*">
+        <div class="err" id="addErr"></div>
+        <div class="modal-actions">
+          <button class="btn btn-primary" id="addProduct">إضافة الصنف</button>
+          <button class="btn btn-ghost" id="panelClose">إغلاق</button>
+        </div>
+        <button class="btn btn-ghost" id="logoutBtn" style="width:100%; margin-top:10px;">تسجيل خروج</button>
+
+        <div class="existing-list" id="existingList"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const WHATSAPP_NUMBER = "966533631172";
+  let products = [];
+
+  const POPULAR_SWEETS = [
+    { name: "كنافة نابلسية", desc: "عجين شعيرية محشو جبن أو قشطة، مسقي بالقطر." },
+    { name: "بسبوسة", desc: "كيكة سميد بالقطر، غالباً بالجوز أو جوز الهند." },
+    { name: "لقيمات", desc: "كريات عجين مقلية ومغطاة بالقطر أو الدبس." },
+    { name: "معمول", desc: "عجينة محشوة بالتمر أو المكسرات، تُقدم بالأعياد." },
+    { name: "كليجة", desc: "حلا نجدي تراثي محشو تمر، بشكل مزخرف." },
+    { name: "بقلاوة", desc: "طبقات عجين فيلو رقيقة مع مكسرات وقطر." },
+    { name: "أم علي", desc: "حلا مصري بالحليب والمكسرات والعجين المقرمش." },
+    { name: "مهلبية", desc: "حلا بالحليب ناعم القوام، يُزين بالمكسرات." },
+    { name: "قطايف", desc: "عجين محشو قشطة أو مكسرات، شائع برمضان." },
+    { name: "تمرية", desc: "كرات من معجون التمر مغطاة بجوز الهند أو السمسم." }
+  ];
+
+  const grid = document.getElementById('productGrid');
+  const emptyState = document.getElementById('emptyState');
+  const offerGrid = document.getElementById('offerGrid');
+  const offerEmptyState = document.getElementById('offerEmptyState');
+
+  function populateNameSelect(){
+    const sel = document.getElementById('pNameSelect');
+    sel.innerHTML = '';
+    POPULAR_SWEETS.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.name;
+      opt.textContent = s.name;
+      sel.appendChild(opt);
+    });
+    const otherOpt = document.createElement('option');
+    otherOpt.value = '__other__';
+    otherOpt.textContent = 'أخرى (اكتب اسم مخصص)';
+    sel.appendChild(otherOpt);
+
+    sel.addEventListener('change', () => {
+      const customInput = document.getElementById('pNameCustom');
+      if(sel.value === '__other__'){
+        customInput.classList.remove('hidden');
+      } else {
+        customInput.classList.add('hidden');
+        customInput.value = '';
+      }
+    });
+  }
+  populateNameSelect();
+
+  function closeSideMenu(){
+    document.getElementById('sideMenu').classList.remove('open');
+    document.getElementById('menuOverlay').classList.remove('open');
+  }
+  function openSideMenu(){
+    populateSideMenu();
+    document.getElementById('sideMenu').classList.add('open');
+    document.getElementById('menuOverlay').classList.add('open');
+  }
+  document.getElementById('hamburgerBtn').addEventListener('click', openSideMenu);
+  document.getElementById('closeSideMenu').addEventListener('click', closeSideMenu);
+  document.getElementById('menuOverlay').addEventListener('click', closeSideMenu);
+
+  function goToTarget(id){
+    closeSideMenu();
+    const el = document.getElementById(id);
+    if(!el) return;
+    setTimeout(() => {
+      el.scrollIntoView({ behavior:'smooth', block:'center' });
+      if(el.classList.contains('card')){
+        el.classList.add('highlight');
+        setTimeout(() => el.classList.remove('highlight'), 2000);
+      }
+    }, 150);
+  }
+
+  function populateSideMenu(){
+    const list = document.getElementById('sideMenuList');
+    list.innerHTML = '';
+
+    POPULAR_SWEETS.forEach((s, i) => {
+      const idx = products.findIndex(p => p.name === s.name);
+      const li = document.createElement('li');
+      const btn = document.createElement('button');
+
+      if(idx > -1){
+        const match = products[idx];
+        btn.innerHTML = `<span>${escapeHtml(s.name)}</span>${match.isOffer ? '<span class="offer-tag">عرض</span>' : ''}`;
+        btn.addEventListener('click', () => goToTarget('product-' + idx));
+      } else {
+        btn.innerHTML = `<span>${escapeHtml(s.name)}</span><span class="avail-badge no">غير متوفر</span>`;
+        btn.disabled = true;
+        btn.style.opacity = '.5';
+        btn.style.cursor = 'default';
+      }
+      li.appendChild(btn);
+      list.appendChild(li);
+    });
+
+    const divider = document.createElement('li');
+    divider.innerHTML = '<div class="side-menu-divider"></div>';
+    list.appendChild(divider);
+
+    const offersLi = document.createElement('li');
+    const offersBtn = document.createElement('button');
+    offersBtn.innerHTML = '<span>العروض 🔥</span>';
+    offersBtn.addEventListener('click', () => goToTarget('offers'));
+    offersLi.appendChild(offersBtn);
+    list.appendChild(offersLi);
+  }
+
+  document.getElementById('pIsOffer').addEventListener('change', (e) => {
+    document.getElementById('offerPriceWrap').classList.toggle('hidden', !e.target.checked);
+  });
+
+  function listenToProducts(){
+    db.collection('products').orderBy('createdAt', 'asc').onSnapshot(snapshot => {
+      products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      render();
+    }, err => {
+      console.error('Firestore listen error:', err);
+      products = [];
+      render();
+    });
+  }
+
+  function buildCard(p, id){
+    const card = document.createElement('div');
+    if(id) card.id = id;
+    card.className = 'card' + (p.isOffer ? ' offer' : '');
+    const thumbHtml = p.image
+      ? `<img class="thumb" src="${p.image}" alt="${escapeHtml(p.name)}">`
+      : `<div class="thumb placeholder">🍮</div>`;
+    const priceHtml = p.isOffer && p.originalPrice
+      ? `<span class="old-price">${p.originalPrice} ريال</span><span class="price">${p.price} ريال</span>`
+      : `<span class="price">${p.price} ريال</span>`;
+    card.innerHTML = `
+      <div class="thumb-wrap">
+        ${p.isOffer ? '<span class="offer-badge">عرض</span>' : ''}
+        ${thumbHtml}
+      </div>
+      <div class="card-body">
+        <h3>${escapeHtml(p.name)}</h3>
+        <p>${escapeHtml(p.desc || '')}</p>
+        <div class="price-row">
+          <span>${priceHtml}</span>
+          <button class="order-btn">اطلب واتساب</button>
+        </div>
+      </div>`;
+    card.querySelector('.order-btn').addEventListener('click', () => orderViaWhatsapp(p));
+    return card;
+  }
+
+  function render(){
+    grid.innerHTML = '';
+    if(products.length === 0){
+      emptyState.classList.remove('hidden');
+    } else {
+      emptyState.classList.add('hidden');
+      products.forEach((p, i) => grid.appendChild(buildCard(p, 'product-' + i)));
+    }
+
+    const offers = products.filter(p => p.isOffer);
+    offerGrid.innerHTML = '';
+    if(offers.length === 0){
+      offerEmptyState.classList.remove('hidden');
+    } else {
+      offerEmptyState.classList.add('hidden');
+      offers.forEach(p => offerGrid.appendChild(buildCard(p)));
+    }
+
+    renderExistingList();
+    populateSideMenu();
+  }
+
+  function renderExistingList(){
+    const list = document.getElementById('existingList');
+    if(!list) return;
+    if(products.length === 0){
+      list.innerHTML = '<p style="font-size:13px;color:#8a7468;">ما فيه أصناف مضافة بعد.</p>';
+      return;
+    }
+    list.innerHTML = '<label>الأصناف الحالية</label>';
+    products.forEach((p, i) => {
+      const row = document.createElement('div');
+      row.className = 'existing-item';
+      row.innerHTML = `
+        ${p.image ? `<img src="${p.image}">` : '<div style="width:42px;height:42px;border-radius:8px;background:#E8B4B8;"></div>'}
+        <span class="name">${escapeHtml(p.name)} — ${p.price} ريال</span>
+        <button data-i="${i}">حذف</button>`;
+      row.querySelector('button').addEventListener('click', async () => {
+        try{
+          await db.collection('products').doc(p.id).delete();
+        }catch(e){
+          alert('صار خطأ بالحذف، حاول مرة ثانية');
+        }
+      });
+      list.appendChild(row);
+    });
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function orderViaWhatsapp(p){
+    const text = `مرحباً، أبي أطلب: ${p.name} - السعر ${p.price} ريال`;
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
+  }
+
+  // Admin modal logic
+  const adminModal = document.getElementById('adminModal');
+  const pinStep = document.getElementById('pinStep');
+  const panelStep = document.getElementById('panelStep');
+
+  document.getElementById('adminGear').addEventListener('click', () => {
+    adminModal.classList.remove('hidden');
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('pinErr').textContent = '';
+
+    if(auth.currentUser){
+      pinStep.classList.add('hidden');
+      panelStep.classList.remove('hidden');
+      renderExistingList();
+    } else {
+      pinStep.classList.remove('hidden');
+      panelStep.classList.add('hidden');
+    }
+  });
+
+  document.getElementById('pinCancel').addEventListener('click', () => {
+    adminModal.classList.add('hidden');
+  });
+
+  document.getElementById('pinSubmit').addEventListener('click', async () => {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const errEl = document.getElementById('pinErr');
+
+    if(!email || !password){
+      errEl.textContent = 'أدخل الإيميل وكلمة المرور';
+      return;
+    }
+    errEl.textContent = 'جاري الدخول...';
+
+    try{
+      await auth.signInWithEmailAndPassword(email, password);
+    }catch(e){
+      errEl.textContent = 'بيانات الدخول غير صحيحة';
+      return;
+    }
+
+    errEl.textContent = '';
+    pinStep.classList.add('hidden');
+    panelStep.classList.remove('hidden');
+    renderExistingList();
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await auth.signOut();
+    adminModal.classList.add('hidden');
+  });
+
+  document.getElementById('panelClose').addEventListener('click', () => {
+    adminModal.classList.add('hidden');
+  });
+
+  function compressImage(file){
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const maxW = 700;
+          const scale = Math.min(1, maxW / img.width);
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.7));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  document.getElementById('addProduct').addEventListener('click', async () => {
+    const sel = document.getElementById('pNameSelect');
+    const customName = document.getElementById('pNameCustom').value.trim();
+    const name = sel.value === '__other__' ? customName : sel.value;
+    const price = document.getElementById('pPrice').value.trim();
+    const desc = document.getElementById('pDesc').value.trim();
+    const fileInput = document.getElementById('pImage');
+    const errEl = document.getElementById('addErr');
+    const isOffer = document.getElementById('pIsOffer').checked;
+    const originalPrice = document.getElementById('pOriginalPrice').value.trim();
+
+    if(!name || !price){
+      errEl.textContent = 'لازم تختار اسم الصنف وتدخل السعر';
+      return;
+    }
+    errEl.textContent = 'جاري الإضافة...';
+
+    const finalize = async (imageData) => {
+      try{
+        await db.collection('products').add({
+          name, price, desc,
+          image: imageData || null,
+          isOffer,
+          originalPrice: isOffer ? originalPrice : null,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      }catch(e){
+        errEl.textContent = 'صار خطأ، حاول مرة ثانية';
+        return;
+      }
+      errEl.textContent = '';
+      sel.value = POPULAR_SWEETS[0].name;
+      document.getElementById('pNameCustom').value = '';
+      document.getElementById('pNameCustom').classList.add('hidden');
+      document.getElementById('pPrice').value = '';
+      document.getElementById('pDesc').value = '';
+      document.getElementById('pIsOffer').checked = false;
+      document.getElementById('pOriginalPrice').value = '';
+      document.getElementById('offerPriceWrap').classList.add('hidden');
+      fileInput.value = '';
+    };
+
+    if(fileInput.files && fileInput.files[0]){
+      const compressed = await compressImage(fileInput.files[0]);
+      await finalize(compressed);
+    } else {
+      await finalize(null);
+    }
+  });
+
+  listenToProducts();
+</script>
+</body>
+</html>
